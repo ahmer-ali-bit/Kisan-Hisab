@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyCzrBVRx-UGH1j-AcJZAh1tKj5lhLcw5Fs</string>
+	<key>GCM_SENDER_ID</key>
+	<string>431963727125</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.kisanHisab</string>
+	<key>PROJECT_ID</key>
+	<string>kisaan-hisab</string>
+	<key>STORAGE_BUCKET</key>
+	<string>kisaan-hisab.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:431963727125:ios:d6a42882d7d5f9fd53b51c</string>
+</dict>
+</plist>

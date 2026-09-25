@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "431963727125",
+    "project_id": "kisaan-hisab",
+    "storage_bucket": "kisaan-hisab.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:431963727125:android:0b85e3ce8e858b8153b51c",
+        "android_client_info": {
+          "package_name": "com.example.kisan_hisab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_0AQMKLAaBK_3gp0ibG_mQA8b9J6IS5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
