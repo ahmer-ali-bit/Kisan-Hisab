@@ -51,7 +51,7 @@ class AppSizes {
 
 class AppStrings {
   static const String appName = 'KISAN HISAB';
-  static const String appTagline = 'Aapka Khet, Aapka Hisab';
+  static const String appTagline = 'Your Farm, Your Ledger';
   static const String appVersion = '1.0.0';
 }
 

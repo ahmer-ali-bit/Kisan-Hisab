@@ -23,7 +23,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
   Future<void> _createBackup() async {
     setState(() {
       _isWorking = true;
-      _statusMessage = 'Cloud backup ban raha hai...';
+      _statusMessage = 'Creating cloud backup...';
     });
 
     try {
@@ -31,7 +31,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       if (!mounted) return;
       AppHelpers.showSnackBar(
         context,
-        'Backup ban gaya! (${backup.sizeLabel})',
+        'Backup created! (${backup.sizeLabel})',
       );
     } catch (e) {
       if (!mounted) return;
@@ -51,7 +51,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       context,
       title: 'Restore Backup?',
       message:
-          '⚠️ Current data DELETE karke is backup se replace kar diya jayega.\n\n'
+          '⚠️ Current data will be DELETED and replaced with this backup.\n\n'
           'Backup: ${backup.label}\n'
           'People: ${backup.peopleCount} | Entries: ${backup.entriesCount}',
       confirmText: 'Restore Now',
@@ -60,7 +60,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
 
     setState(() {
       _isWorking = true;
-      _statusMessage = 'Data restore ho raha hai...';
+      _statusMessage = 'Restoring data...';
     });
 
     try {
@@ -88,7 +88,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
     final confirm = await AppHelpers.showConfirmDialog(
       context,
       title: 'Delete Backup?',
-      message: '${backup.label} delete ho jayega.',
+      message: '${backup.label} will be deleted.',
       confirmText: 'Delete',
     );
     if (!confirm || !mounted) return;
@@ -106,15 +106,14 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
   Future<void> _copyBackupText() async {
     setState(() {
       _isWorking = true;
-      _statusMessage = 'Backup text tayar ho raha hai...';
+      _statusMessage = 'Preparing backup text...';
     });
 
     try {
       final b64 = await BackupService.exportAsBase64String();
       await Clipboard.setData(ClipboardData(text: b64));
       if (!mounted) return;
-      AppHelpers.showSnackBar(
-          context, 'Backup code Clipboard mein Copy ho gaya!');
+      AppHelpers.showSnackBar(context, 'Backup code copied to Clipboard!');
     } catch (e) {
       if (!mounted) return;
       AppHelpers.showSnackBar(context, e.toString(), isError: true);
@@ -131,7 +130,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
   Future<void> _exportShare() async {
     setState(() {
       _isWorking = true;
-      _statusMessage = 'Share file ban rahi hai...';
+      _statusMessage = 'Generating share file...';
     });
 
     try {
@@ -159,7 +158,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
     final text = data?.text;
     if (text == null || text.trim().isEmpty) {
       AppHelpers.showSnackBar(
-          context, 'Clipboard khali hai! Pehle backup code copy karein.',
+          context, 'Clipboard is empty! Copy backup code first.',
           isError: true);
       return;
     }
@@ -167,15 +166,14 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
     final confirm = await AppHelpers.showConfirmDialog(
       context,
       title: 'Import Backup?',
-      message:
-          'Current data REPLACE ho jayega clipboard wale backup se. Continue?',
+      message: 'Current data will be REPLACED with clipboard backup. Continue?',
       confirmText: 'Import Now',
     );
     if (!confirm || !mounted) return;
 
     setState(() {
       _isWorking = true;
-      _statusMessage = 'Backup import ho raha hai...';
+      _statusMessage = 'Importing backup...';
     });
 
     try {
@@ -213,27 +211,6 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         children: [
           Column(
             children: [
-              // Banner
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(AppSizes.paddingMedium),
-                color: AppColors.paaniColor,
-                child: const Row(
-                  children: [
-                    Icon(Icons.cloud_done_outlined,
-                        color: Colors.blue, size: 22),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Cloud Backup bina kisi storage cost ke Firestore mein mehfooz hota hai.',
-                        style:
-                            TextStyle(fontSize: 12, color: AppColors.textDark),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               // Controls
               Padding(
                 padding: const EdgeInsets.all(AppSizes.paddingMedium),

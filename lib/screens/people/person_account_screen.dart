@@ -85,7 +85,7 @@ class PersonAccountScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ========== 1. TOTAL HISAB CARD ==========
+            // ========== 1. TOTAL BALANCE CARD ==========
             _buildTotalHisabCard(person),
             const SizedBox(height: AppSizes.paddingLarge),
 
@@ -153,7 +153,7 @@ class PersonAccountScreen extends StatelessWidget {
       child: Column(
         children: [
           const Text(
-            'Total Hisab',
+            'Total Balance',
             style: TextStyle(color: AppColors.textLight, fontSize: 14),
           ),
           const SizedBox(height: 8),
@@ -273,9 +273,9 @@ class PersonAccountScreen extends StatelessWidget {
           icon: Icons.history,
           color: AppColors.textDark,
           onTap: () {
-            // Module 8 mein proper filter ke sath history dikhayenge
+            // Show history with proper filter in Module 8
             AppHelpers.showSnackBar(
-                context, 'History module next step mein aayega!');
+                context, 'History module coming in next step!');
           },
         ),
       ],

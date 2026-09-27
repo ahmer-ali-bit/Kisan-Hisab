@@ -72,7 +72,7 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
 
     if (success) {
       AppHelpers.showSnackBar(context, 'PIN set successfully!');
-      // Dashboard pe jayenge (abhi temporary)
+      // Navigate to Dashboard
       Navigator.of(context).pushReplacementNamed('/dashboard');
     } else {
       setState(() {
@@ -128,7 +128,7 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
               Text(
                 _isConfirmStep
                     ? 'Enter the same 4-digit PIN again'
-                    : 'Set a 4-digit PIN to secure your hisab',
+                    : 'Set a 4-digit PIN to secure your ledger',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 14,

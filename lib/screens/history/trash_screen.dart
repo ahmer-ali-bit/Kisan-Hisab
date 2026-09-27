@@ -27,7 +27,7 @@ class _TrashScreenState extends State<TrashScreen> {
       } catch (e) {
         debugPrint('Trash init error: $e');
       }
-      // Short delay so stream settle ho jaye
+      // Short delay for stream to settle
       await Future.delayed(const Duration(milliseconds: 500));
       if (mounted) setState(() => _isLoading = false);
     });

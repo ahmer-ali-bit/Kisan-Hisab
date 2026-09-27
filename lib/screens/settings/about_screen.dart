@@ -74,7 +74,7 @@ class AboutScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Managing Khata & Hisab effectively.',
+                'Managing Accounts & Ledger effectively.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppColors.textLight),
               ),

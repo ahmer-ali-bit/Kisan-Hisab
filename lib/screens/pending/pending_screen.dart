@@ -4,8 +4,8 @@ import '../../config/constants.dart';
 import '../../models/person_model.dart';
 import '../../providers/people_provider.dart';
 import '../../utils/formatters.dart';
+import '../../utils/responsive.dart';
 import '../../utils/helpers.dart';
-import '../../widgets/common/bottom_nav_bar.dart';
 import '../../widgets/common/empty_state.dart';
 import '../../widgets/people/pending_person_tile.dart';
 import '../entries/dynamic_entry_screen.dart';
@@ -91,26 +91,7 @@ class _PendingScreenState extends State<PendingScreen>
     );
   }
 
-  void _onNavTapped(int index) {
-    if (index == 0) {
-      Navigator.pushReplacementNamed(context, '/dashboard');
-      return;
-    }
-    if (index == 1) {
-      Navigator.pushReplacementNamed(context, '/people');
-      return;
-    }
-    if (index == 2) {
-      Navigator.pushNamed(context, '/select-entry-type');
-      return;
-    }
-    if (index == 3) {
-      Navigator.pushReplacementNamed(context, '/history');
-      return;
-    }
-    // index 4 = Reports — next module
-    AppHelpers.showSnackBar(context, 'Reports — next module mein aayega');
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -157,8 +138,8 @@ class _PendingScreenState extends State<PendingScreen>
             list: receiveList,
             total: totalReceive,
             isToReceive: true,
-            emptyTitle: 'Kuch lena nahi hai',
-            emptySubtitle: 'Jis se lena ho, unki entries add karein',
+            emptyTitle: 'Nothing to receive',
+            emptySubtitle: 'Add entries for people who owe you',
             headerColor: AppColors.toReceive,
             headerBg: AppColors.toReceiveLight,
             headerLabel: 'Total To Receive',
@@ -168,17 +149,13 @@ class _PendingScreenState extends State<PendingScreen>
             list: payList,
             total: totalPay,
             isToReceive: false,
-            emptyTitle: 'Kuch dena nahi hai',
-            emptySubtitle: 'Jis ko dena ho, unki entries add karein',
+            emptyTitle: 'Nothing to pay',
+            emptySubtitle: 'Add entries for people you owe',
             headerColor: AppColors.toPay,
             headerBg: AppColors.toPayLight,
             headerLabel: 'Total To Pay',
           ),
         ],
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 0, // Pending often opened from Home overview
-        onTap: _onNavTapped,
       ),
     );
   }
@@ -198,8 +175,8 @@ class _PendingScreenState extends State<PendingScreen>
         // Summary Header
         Container(
           width: double.infinity,
-          margin: const EdgeInsets.all(AppSizes.paddingMedium),
-          padding: const EdgeInsets.all(AppSizes.paddingMedium),
+          margin: EdgeInsets.all(context.w(AppSizes.paddingMedium)),
+          padding: EdgeInsets.all(context.w(AppSizes.paddingMedium)),
           decoration: BoxDecoration(
             color: headerBg,
             borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
@@ -215,24 +192,24 @@ class _PendingScreenState extends State<PendingScreen>
                     headerLabel,
                     style: TextStyle(
                       color: headerColor,
-                      fontSize: 13,
+                      fontSize: context.sp(13),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: context.h(4)),
                   Text(
                     AppFormatters.currency(total),
                     style: TextStyle(
                       color: headerColor,
-                      fontSize: 22,
+                      fontSize: context.sp(22),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: EdgeInsets.symmetric(
+                    horizontal: context.w(12), vertical: context.h(6)),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(AppSizes.radiusLarge),
@@ -242,7 +219,7 @@ class _PendingScreenState extends State<PendingScreen>
                   style: TextStyle(
                     color: headerColor,
                     fontWeight: FontWeight.w600,
-                    fontSize: 13,
+                    fontSize: context.sp(13),
                   ),
                 ),
               ),
@@ -259,14 +236,14 @@ class _PendingScreenState extends State<PendingScreen>
                   subtitle: emptySubtitle,
                 )
               : ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSizes.paddingMedium,
+                  padding: EdgeInsets.fromLTRB(
+                    context.w(AppSizes.paddingMedium),
                     0,
-                    AppSizes.paddingMedium,
-                    AppSizes.paddingMedium,
+                    context.w(AppSizes.paddingMedium),
+                    context.h(32),
                   ),
                   itemCount: list.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  separatorBuilder: (_, __) => SizedBox(height: context.h(10)),
                   itemBuilder: (context, index) {
                     final person = list[index];
                     return PendingPersonTile(

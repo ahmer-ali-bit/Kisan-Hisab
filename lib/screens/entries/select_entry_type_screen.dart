@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../config/constants.dart';
+import '../../utils/responsive.dart';
 import 'dynamic_entry_screen.dart';
 
 class SelectEntryTypeScreen extends StatelessWidget {
@@ -70,27 +71,33 @@ class SelectEntryTypeScreen extends StatelessWidget {
         elevation: 0,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(AppSizes.paddingMedium),
+        padding: EdgeInsets.fromLTRB(
+          context.w(AppSizes.paddingMedium),
+          context.h(AppSizes.paddingMedium),
+          context.w(AppSizes.paddingMedium),
+          context.h(32),
+        ),
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: AppSizes.paddingSmall),
+          Padding(
+            padding: EdgeInsets.symmetric(
+                vertical: context.h(AppSizes.paddingSmall)),
             child: Text(
               'Select Type of Entry',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: context.sp(14),
                 fontWeight: FontWeight.w500,
                 color: AppColors.textLight,
               ),
             ),
           ),
-          const SizedBox(height: AppSizes.paddingSmall),
+          SizedBox(height: context.h(AppSizes.paddingSmall)),
           ...entryTypes.map((item) => Padding(
-                padding: const EdgeInsets.only(bottom: 10),
+                padding: EdgeInsets.only(bottom: context.h(10)),
                 child: InkWell(
                   onTap: item.onTap,
                   borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
                   child: Container(
-                    padding: const EdgeInsets.all(AppSizes.paddingMedium),
+                    padding: EdgeInsets.all(context.w(AppSizes.paddingMedium)),
                     decoration: BoxDecoration(
                       color: item.color,
                       borderRadius:
@@ -100,27 +107,27 @@ class SelectEntryTypeScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: EdgeInsets.all(context.w(10)),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.7),
                             shape: BoxShape.circle,
                           ),
-                          child:
-                              Icon(item.icon, color: item.iconColor, size: 24),
+                          child: Icon(item.icon,
+                              color: item.iconColor, size: context.sp(24)),
                         ),
-                        const SizedBox(width: AppSizes.paddingMedium),
+                        SizedBox(width: context.w(AppSizes.paddingMedium)),
                         Expanded(
                           child: Text(
                             item.title,
-                            style: const TextStyle(
-                              fontSize: 15,
+                            style: TextStyle(
+                              fontSize: context.sp(15),
                               fontWeight: FontWeight.w600,
                               color: AppColors.textDark,
                             ),
                           ),
                         ),
-                        const Icon(Icons.arrow_forward_ios,
-                            size: 14, color: AppColors.textLight),
+                        Icon(Icons.arrow_forward_ios,
+                            size: context.sp(14), color: AppColors.textLight),
                       ],
                     ),
                   ),

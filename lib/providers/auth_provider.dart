@@ -18,7 +18,7 @@ class AuthProvider extends ChangeNotifier {
   bool get fingerprintEnabled => _fingerprintEnabled;
   bool get isAuthenticated => _status == AuthStatus.authenticated;
 
-  // App start par call hoga (Splash se)
+  // Called on app start (from Splash)
   Future<void> checkAuthStatus() async {
     _isLoading = true;
     notifyListeners();

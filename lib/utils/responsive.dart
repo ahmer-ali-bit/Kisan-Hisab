@@ -38,3 +38,22 @@ class Responsive {
     return const EdgeInsets.all(16);
   }
 }
+
+/// Extension on BuildContext for dynamic layout calculations using MediaQuery
+extension ResponsiveContext on BuildContext {
+  /// Screen width from MediaQuery
+  double get screenWidth => MediaQuery.of(this).size.width;
+
+  /// Screen height from MediaQuery
+  double get screenHeight => MediaQuery.of(this).size.height;
+
+  /// Dynamically scale width from reference design (375px) using MediaQuery
+  double w(double widthPx) => (widthPx / 375.0) * screenWidth;
+
+  /// Dynamically scale height from reference design (812px) using MediaQuery
+  double h(double heightPx) => (heightPx / 812.0) * screenHeight;
+
+  /// Dynamically scale font/icon size from reference design using MediaQuery
+  double sp(double sizePx) => (sizePx / 375.0) * screenWidth;
+}
+

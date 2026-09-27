@@ -58,7 +58,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
 
   void _changePin() {
     // Navigate to PIN setup screen in 'change' mode
-    // Module 2 me jo PIN Setup screen banai thi use call karein
+    // Call the PIN Setup screen created in Module 2
     Navigator.pushNamed(context, '/pin-setup');
   }
 

@@ -4,10 +4,9 @@ import 'package:kisan_hisab/screens/people/person_account_screen.dart';
 import 'package:provider/provider.dart';
 import '../../config/constants.dart';
 import '../../providers/people_provider.dart';
-import '../../widgets/common/bottom_nav_bar.dart';
+import '../../utils/responsive.dart';
 import '../../widgets/common/empty_state.dart';
 import '../../widgets/people/person_tile.dart';
-import '../../utils/helpers.dart';
 
 class PeopleListScreen extends StatefulWidget {
   const PeopleListScreen({super.key});
@@ -33,22 +32,7 @@ class _PeopleListScreenState extends State<PeopleListScreen> {
     super.dispose();
   }
 
-  void _onNavTapped(int index) {
-    if (index == 1) return; // already on People
-    if (index == 0) {
-      Navigator.pushReplacementNamed(context, '/dashboard');
-      return;
-    }
-    if (index == 2) {
-      Navigator.pushNamed(context, '/select-entry-type');
-      return;
-    }
-    if (index == 3) {
-      Navigator.pushReplacementNamed(context, '/history');
-      return;
-    }
-    AppHelpers.showSnackBar(context, 'Tab $index — next modules mein aayega');
-  }
+
 
   void _openAddPerson({person}) async {
     final result = await Navigator.push(
@@ -58,7 +42,7 @@ class _PeopleListScreenState extends State<PeopleListScreen> {
       ),
     );
     if (result == true && mounted) {
-      // stream auto-refresh karega
+      // stream will auto-refresh
     }
   }
 
@@ -73,6 +57,7 @@ class _PeopleListScreenState extends State<PeopleListScreen> {
         title: const Text('People'),
         centerTitle: true,
         elevation: 0,
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.person_add_alt_1, color: Colors.white),
@@ -139,9 +124,14 @@ class _PeopleListScreenState extends State<PeopleListScreen> {
                             : 'Try a different name or phone',
                       )
                     : ListView.separated(
-                        padding: const EdgeInsets.all(AppSizes.paddingMedium),
+                        padding: EdgeInsets.fromLTRB(
+                          context.w(AppSizes.paddingMedium),
+                          context.h(AppSizes.paddingMedium),
+                          context.w(AppSizes.paddingMedium),
+                          context.h(80),
+                        ),
                         itemCount: provider.people.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 10),
+                        separatorBuilder: (_, __) => SizedBox(height: context.h(10)),
                         itemBuilder: (context, index) {
                           final person = provider.people[index];
                           return PersonTile(
@@ -166,10 +156,6 @@ class _PeopleListScreenState extends State<PeopleListScreen> {
         onPressed: () => _openAddPerson(),
         backgroundColor: AppColors.primary,
         child: const Icon(Icons.add, color: Colors.white),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 1,
-        onTap: _onNavTapped,
       ),
     );
   }

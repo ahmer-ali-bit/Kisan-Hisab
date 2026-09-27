@@ -4,8 +4,7 @@ import 'package:provider/provider.dart';
 import '../../config/constants.dart';
 import '../../models/entry_model.dart';
 import '../../providers/entry_provider.dart';
-import '../../utils/helpers.dart';
-import '../../widgets/common/bottom_nav_bar.dart';
+import '../../utils/responsive.dart';
 import '../../widgets/common/empty_state.dart';
 import '../../widgets/entries/entry_filter_tabs.dart';
 import '../../widgets/entries/entry_tile.dart';
@@ -77,22 +76,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 
-  void _onNavTapped(int index) {
-    if (index == 3) return; // Already on History
-    if (index == 0) {
-      Navigator.pushReplacementNamed(context, '/dashboard');
-      return;
-    }
-    if (index == 1) {
-      Navigator.pushReplacementNamed(context, '/people');
-      return;
-    }
-    if (index == 2) {
-      Navigator.pushNamed(context, '/select-entry-type');
-      return;
-    }
-    AppHelpers.showSnackBar(context, 'Tab $index — next modules mein aayega');
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -107,6 +91,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         title: const Text('History'),
         centerTitle: true,
         elevation: 0,
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_outline, color: Colors.white),
@@ -139,8 +124,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         subtitle: 'Add your first entry to get started',
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: AppSizes.paddingMedium),
+                        padding: EdgeInsets.fromLTRB(
+                          context.w(AppSizes.paddingMedium),
+                          0,
+                          context.w(AppSizes.paddingMedium),
+                          context.h(32),
+                        ),
                         itemCount: grouped.length,
                         itemBuilder: (context, index) {
                           final key = grouped.keys.elementAt(index);
@@ -151,19 +140,19 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: AppSizes.paddingSmall),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: context.h(AppSizes.paddingSmall)),
                                 child: Text(
                                   _getDateHeader(firstDate),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.textDark,
-                                    fontSize: 14,
+                                    fontSize: context.sp(14),
                                   ),
                                 ),
                               ),
                               ...entries.map((entry) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 8),
+                                    padding: EdgeInsets.only(bottom: context.h(8)),
                                     child: EntryTile(
                                       entry: entry,
                                       onTap: () {
@@ -184,10 +173,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       ),
           ),
         ],
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 3,
-        onTap: _onNavTapped,
       ),
     );
   }

@@ -244,7 +244,7 @@ class BackupService {
     }
 
     throw Exception(
-        'Backup decode nahi ho saka. Code ghalat ya incomplete hai.');
+        'Could not decode backup. Code is invalid or incomplete.');
   }
 
   // ========== IMPORT FROM BASE64 OR JSON STRING ==========
@@ -254,7 +254,7 @@ class BackupService {
     final data = _restoreTimestamps(decoded);
 
     if (data['app'] != null && data['app'] != 'KISAN_HISAB') {
-      throw Exception('Yeh backup KISAN HISAB ka nahi hai.');
+      throw Exception('This backup is not from KISAN HISAB.');
     }
 
     final people = List<Map<String, dynamic>>.from(

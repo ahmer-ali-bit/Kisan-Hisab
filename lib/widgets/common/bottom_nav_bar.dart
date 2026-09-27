@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../config/constants.dart';
+import '../../utils/responsive.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -13,6 +14,9 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final navButtonSize = context.w(50);
+    final iconSize = context.sp(30);
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -26,7 +30,10 @@ class CustomBottomNavBar extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.w(8),
+            vertical: context.h(8),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -46,13 +53,13 @@ class CustomBottomNavBar extends StatelessWidget {
               GestureDetector(
                 onTap: () => onTap(2),
                 child: Container(
-                  height: 50,
-                  width: 50,
+                  height: navButtonSize,
+                  width: navButtonSize,
                   decoration: const BoxDecoration(
                     color: AppColors.primary,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.add, color: Colors.white, size: 30),
+                  child: Icon(Icons.add, color: Colors.white, size: iconSize),
                 ),
               ),
               _NavBarItem(
@@ -99,13 +106,13 @@ class _NavBarItem extends StatelessWidget {
           Icon(
             icon,
             color: isSelected ? AppColors.primary : AppColors.textLight,
-            size: 26,
+            size: context.sp(26),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: context.h(4)),
           Text(
             label,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: context.sp(11),
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               color: isSelected ? AppColors.primary : AppColors.textLight,
             ),

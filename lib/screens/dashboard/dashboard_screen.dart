@@ -4,7 +4,7 @@ import '../../config/constants.dart';
 import '../../providers/dashboard_provider.dart';
 import '../../utils/formatters.dart';
 import '../../utils/helpers.dart';
-import '../../widgets/common/bottom_nav_bar.dart';
+import '../../utils/responsive.dart';
 import '../pending/pending_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -15,8 +15,6 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  final int _currentIndex = 0;
-
   @override
   void initState() {
     super.initState();
@@ -24,26 +22,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<DashboardProvider>().startListening();
     });
-  }
-
-  void _onNavTapped(int index) {
-    if (index == 0) return;
-    if (index == 1) {
-      Navigator.pushReplacementNamed(context, '/people');
-      return;
-    }
-    if (index == 2) {
-      Navigator.pushNamed(context, '/select-entry-type');
-      return;
-    }
-    if (index == 3) {
-      Navigator.pushReplacementNamed(context, '/history');
-      return;
-    }
-    if (index == 4) {
-      Navigator.pushReplacementNamed(context, '/reports');
-      return;
-    }
   }
 
   void _openPending(int tabIndex) {
@@ -165,7 +143,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               color: AppColors.textDark),
                         ),
                         TextButton(
-                          onPressed: () => _onNavTapped(3),
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/history'),
                           child: const Text('See All',
                               style: TextStyle(color: AppColors.primary)),
                         ),
@@ -219,17 +198,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 32),
                   ],
                 ),
               ),
             ),
-
-      // ===== BOTTOM NAV BAR =====
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: _onNavTapped,
-      ),
     );
   }
 
@@ -281,7 +254,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
           // Divider
-          Container(height: 60, width: 1, color: AppColors.border),
+          Container(
+              height: context.h(60), width: context.w(1), color: AppColors.border),
           // To Pay Card (Tab 1)
           Expanded(
             child: InkWell(
@@ -291,21 +265,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 bottomRight: Radius.circular(AppSizes.radiusMedium),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(AppSizes.paddingMedium),
+                padding: EdgeInsets.all(context.w(AppSizes.paddingMedium)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
+                    Row(
                       children: [
-                        Text('To Pay',
+                        const Text('To Pay',
                             style: TextStyle(
                                 color: AppColors.textLight, fontSize: 13)),
-                        Spacer(),
+                        const Spacer(),
                         Icon(Icons.arrow_upward,
-                            color: AppColors.toPay, size: 16),
+                            color: AppColors.toPay, size: context.sp(16)),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: context.h(8)),
                     Text(
                       AppFormatters.currency(provider.toPay),
                       style: const TextStyle(
@@ -325,7 +299,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildStatCard(String title, String value) {
     return Container(
-      padding: const EdgeInsets.all(AppSizes.paddingMedium),
+      padding: EdgeInsets.all(context.w(AppSizes.paddingMedium)),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
@@ -336,7 +310,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         children: [
           Text(title,
               style: const TextStyle(color: AppColors.textLight, fontSize: 13)),
-          const SizedBox(height: 8),
+          SizedBox(height: context.h(8)),
           Text(value,
               style: const TextStyle(
                   fontSize: 16,
@@ -375,8 +349,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.only(bottom: context.h(10)),
+      padding: EdgeInsets.all(context.w(12)),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
@@ -385,11 +359,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(context.w(10)),
             decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
-            child: Icon(icon, color: iconColor, size: 20),
+            child: Icon(icon, color: iconColor, size: context.sp(20)),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: context.w(12)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -397,7 +371,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Text(activity.title,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 14)),
-                const SizedBox(height: 2),
+                SizedBox(height: context.h(2)),
                 Text(activity.subtitle,
                     style: const TextStyle(
                         color: AppColors.primary,

@@ -86,7 +86,7 @@ class AuthService {
         await _auth.signInAnonymously();
       }
     } catch (e) {
-      // Offline mode mein bhi allow karenge
+      // Allow in offline mode as well
       print('Firebase anonymous sign-in: $e');
     }
   }
@@ -94,7 +94,7 @@ class AuthService {
   // ========== LOGOUT ==========
   static Future<void> logout() async {
     await _auth.signOut();
-    // PIN clear nahi karte — sirf session
+    // Do not clear PIN — only session
   }
 
   // ========== RESET APP (Forgot PIN extreme) ==========

@@ -163,37 +163,3 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 }
-
-// Temporary Next Screen (Module 2: PIN Login Screen yahan aayega)
-class _TempNextScreen extends StatelessWidget {
-  const _TempNextScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.check_circle, size: 70, color: AppColors.primary),
-            SizedBox(height: 20),
-            Text(
-              'Splash Complete!',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textDark,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Next: PIN Login Screen',
-              style: TextStyle(color: AppColors.textLight),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

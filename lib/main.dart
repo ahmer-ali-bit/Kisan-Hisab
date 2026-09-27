@@ -5,17 +5,14 @@ import 'package:kisan_hisab/providers/dashboard_provider.dart';
 import 'package:kisan_hisab/providers/entry_provider.dart';
 import 'package:kisan_hisab/providers/people_provider.dart';
 import 'package:kisan_hisab/providers/rate_provider.dart';
-import 'package:kisan_hisab/screens/dashboard/dashboard_screen.dart';
 import 'package:kisan_hisab/screens/entries/select_entry_type_screen.dart';
-import 'package:kisan_hisab/screens/history/history_screen.dart';
 import 'package:kisan_hisab/screens/pending/pending_screen.dart';
-import 'package:kisan_hisab/screens/people/people_list_screen.dart';
 import 'package:kisan_hisab/screens/rates/rate_management_screen.dart';
-import 'package:kisan_hisab/screens/reports/reports_dashboard_screen.dart';
 import 'package:kisan_hisab/screens/settings/about_screen.dart';
 import 'package:kisan_hisab/screens/settings/backup_restore_screen.dart';
 import 'package:kisan_hisab/screens/settings/security_screen.dart';
 import 'package:kisan_hisab/screens/settings/settings_scren.dart';
+import 'package:kisan_hisab/screens/main_shell_screen.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'config/theme.dart';
@@ -63,13 +60,13 @@ class KisanHisabApp extends StatelessWidget {
         routes: {
           '/pin-setup': (_) => const PinSetupScreen(),
           '/pin-login': (_) => const PinLoginScreen(),
-          '/dashboard': (_) => const DashboardScreen(),
-          '/people': (_) => const PeopleListScreen(),
+          '/dashboard': (_) => const MainShellScreen(initialTab: 0),
+          '/people': (_) => const MainShellScreen(initialTab: 1),
           '/rate-management': (_) => const RateManagementScreen(),
           '/select-entry-type': (_) => const SelectEntryTypeScreen(),
-          '/history': (_) => const HistoryScreen(),
+          '/history': (_) => const MainShellScreen(initialTab: 3),
           '/pending': (_) => const PendingScreen(),
-          '/reports': (_) => const ReportsDashboardScreen(),
+          '/reports': (_) => const MainShellScreen(initialTab: 4),
           '/settings': (_) => const SettingsScreen(),
           '/security': (_) => const SecurityScreen(),
           '/about': (_) => const AboutScreen(),

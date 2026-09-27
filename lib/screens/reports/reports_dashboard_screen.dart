@@ -1,33 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../config/constants.dart';
-import '../../utils/helpers.dart';
-import '../../widgets/common/bottom_nav_bar.dart';
+import '../../utils/responsive.dart';
 import 'monthly_report_screen.dart';
 import 'crop_wise_report_screen.dart';
 import 'person_wise_report_screen.dart';
 
 class ReportsDashboardScreen extends StatelessWidget {
   const ReportsDashboardScreen({super.key});
-
-  void _onNavTapped(BuildContext context, int index) {
-    if (index == 4) return; // Already on Reports
-    if (index == 0) {
-      Navigator.pushReplacementNamed(context, '/dashboard');
-      return;
-    }
-    if (index == 1) {
-      Navigator.pushReplacementNamed(context, '/people');
-      return;
-    }
-    if (index == 2) {
-      Navigator.pushNamed(context, '/select-entry-type');
-      return;
-    }
-    if (index == 3) {
-      Navigator.pushReplacementNamed(context, '/history');
-      return;
-    }
-  }
 
   void _navigate(BuildContext context, Widget screen) {
     Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
@@ -42,27 +21,36 @@ class ReportsDashboardScreen extends StatelessWidget {
         title: const Text('Reports & Analytics'),
         centerTitle: true,
         elevation: 0,
+        automaticallyImplyLeading: false,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(AppSizes.paddingMedium),
+        padding: EdgeInsets.fromLTRB(
+          context.w(AppSizes.paddingMedium),
+          context.h(AppSizes.paddingMedium),
+          context.w(AppSizes.paddingMedium),
+          context.h(32),
+        ),
         children: [
           _buildReportCard(
+            context,
             title: 'Monthly Summary',
             subtitle: 'Income vs Expense (Bar Chart)',
             icon: Icons.bar_chart,
             color: Colors.blue,
             onTap: () => _navigate(context, const MonthlyReportScreen()),
           ),
-          const SizedBox(height: AppSizes.paddingMedium),
+          SizedBox(height: context.h(AppSizes.paddingMedium)),
           _buildReportCard(
+            context,
             title: 'Crop-wise Analysis',
             subtitle: 'Production, Cost & Profit',
             icon: Icons.pie_chart,
             color: Colors.orange,
             onTap: () => _navigate(context, const CropWiseReportScreen()),
           ),
-          const SizedBox(height: AppSizes.paddingMedium),
+          SizedBox(height: context.h(AppSizes.paddingMedium)),
           _buildReportCard(
+            context,
             title: 'Person-wise Report',
             subtitle: 'Individual ledger summary',
             icon: Icons.people_alt,
@@ -71,14 +59,11 @@ class ReportsDashboardScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: 4,
-        onTap: (index) => _onNavTapped(context, index),
-      ),
     );
   }
 
-  Widget _buildReportCard({
+  Widget _buildReportCard(
+    BuildContext context, {
     required String title,
     required String subtitle,
     required IconData icon,
@@ -89,7 +74,7 @@ class ReportsDashboardScreen extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
       child: Container(
-        padding: const EdgeInsets.all(AppSizes.paddingLarge),
+        padding: EdgeInsets.all(context.w(AppSizes.paddingLarge)),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
@@ -105,39 +90,39 @@ class ReportsDashboardScreen extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(context.w(12)),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: color, size: 28),
+              child: Icon(icon, color: color, size: context.sp(28)),
             ),
-            const SizedBox(width: AppSizes.paddingMedium),
+            SizedBox(width: context.w(AppSizes.paddingMedium)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: TextStyle(
+                      fontSize: context.sp(16),
                       fontWeight: FontWeight.bold,
                       color: AppColors.textDark,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: context.h(4)),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      fontSize: 13,
+                    style: TextStyle(
+                      fontSize: context.sp(13),
                       color: AppColors.textLight,
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios,
-                size: 16, color: AppColors.textLight),
+            Icon(Icons.arrow_forward_ios,
+                size: context.sp(16), color: AppColors.textLight),
           ],
         ),
       ),

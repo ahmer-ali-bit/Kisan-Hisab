@@ -44,7 +44,7 @@ class RateService {
         .doc(uid)
         .collection('rates')
         .where('type', isEqualTo: type)
-        .orderBy('effectiveFrom', descending: true) // Latest upar aayega
+        .orderBy('effectiveFrom', descending: true) // Latest on top
         .snapshots()
         .map((snap) =>
             snap.docs.map((d) => RateModel.fromMap(d.id, d.data())).toList());
