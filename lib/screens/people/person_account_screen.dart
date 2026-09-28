@@ -6,7 +6,6 @@ import '../../models/person_model.dart';
 import '../../providers/entry_provider.dart';
 import '../../providers/people_provider.dart';
 import '../../utils/formatters.dart';
-import '../../utils/helpers.dart';
 import '../entries/dynamic_entry_screen.dart';
 import '../entries/select_entry_type_screen.dart';
 import 'add_person_screen.dart';
@@ -273,9 +272,7 @@ class PersonAccountScreen extends StatelessWidget {
           icon: Icons.history,
           color: AppColors.textDark,
           onTap: () {
-            // Show history with proper filter in Module 8
-            AppHelpers.showSnackBar(
-                context, 'History module coming in next step!');
+          
           },
         ),
       ],

@@ -97,9 +97,11 @@ class AuthService {
     // Do not clear PIN — only session
   }
 
-  // ========== RESET APP (Forgot PIN extreme) ==========
+  // ========== RESET APP (Forgot PIN) ==========
+  // Clears only local PIN/fingerprint data. The Firebase session is kept
+  // intentionally: signing out would create a new anonymous account and the
+  // user would lose access to their existing ledger.
   static Future<void> resetApp() async {
     await SecureStorageService.clearAll();
-    await _auth.signOut();
   }
 }

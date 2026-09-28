@@ -84,41 +84,34 @@ class _PinLoginScreenState extends State<PinLoginScreen> {
     }
   }
 
-  void _onForgotPin() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
-        ),
-        title: const Text('Forgot PIN?'),
-        content: const Text(
-          'For security, you will need to reset the app. All local PIN data will be cleared. Your cloud data (if any) will remain safe.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel',
-                style: TextStyle(color: AppColors.textLight)),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(ctx);
-              // Extreme reset
-              context.read<AuthProvider>();
-              // We will add reset later in settings
-              AppHelpers.showSnackBar(
-                context,
-                'Please reinstall or clear app data to reset PIN',
-                isError: true,
-              );
-            },
-            child:
-                const Text('Reset', style: TextStyle(color: AppColors.toPay)),
-          ),
-        ],
-      ),
+  Future<void> _onForgotPin() async {
+    if (_isLoading) return;
+
+    final confirmed = await AppHelpers.showConfirmDialog(
+      context,
+      title: 'Forgot PIN?',
+      message:
+          'Your old PIN will be removed and you will be asked to create a new one. '
+          'Your ledger data stays safe in the cloud and is not deleted.',
+      confirmText: 'Reset PIN',
     );
+
+    if (!confirmed || !mounted) return;
+
+    final auth = context.read<AuthProvider>();
+    final success = await auth.resetApp();
+
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.of(context).pushNamedAndRemoveUntil('/pin-setup', (route) => false);
+    } else {
+      AppHelpers.showSnackBar(
+        context,
+        auth.error ?? 'Failed to reset PIN. Please try again.',
+        isError: true,
+      );
+    }
   }
 
   @override

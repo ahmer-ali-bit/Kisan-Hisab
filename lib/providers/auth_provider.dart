@@ -128,6 +128,27 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  // Forgot PIN: clear local PIN data and start over with a new PIN
+  Future<bool> resetApp() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await AuthService.resetApp();
+      _fingerprintEnabled = false;
+      _status = AuthStatus.pinNotSet;
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   void clearError() {
     _error = null;
     notifyListeners();

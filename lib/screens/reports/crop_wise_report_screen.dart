@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../config/constants.dart';
-import '../../models/entry_model.dart';
 import '../../providers/entry_provider.dart';
 import '../../utils/formatters.dart';
 
