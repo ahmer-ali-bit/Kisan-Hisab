@@ -5,7 +5,6 @@ import '../../models/person_model.dart';
 import '../../providers/people_provider.dart';
 import '../../utils/formatters.dart';
 import '../../utils/responsive.dart';
-import '../../utils/helpers.dart';
 import '../../widgets/common/empty_state.dart';
 import '../../widgets/people/pending_person_tile.dart';
 import '../entries/dynamic_entry_screen.dart';
@@ -73,8 +72,9 @@ class _PendingScreenState extends State<PendingScreen>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const DynamicEntryScreen(
+        builder: (_) => DynamicEntryScreen(
           entryType: EntryTypes.paymentReceive,
+          personId: person.id,
         ),
       ),
     );
@@ -84,8 +84,9 @@ class _PendingScreenState extends State<PendingScreen>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const DynamicEntryScreen(
+        builder: (_) => DynamicEntryScreen(
           entryType: EntryTypes.paymentPay,
+          personId: person.id,
         ),
       ),
     );

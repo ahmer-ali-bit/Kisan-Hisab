@@ -10,9 +10,9 @@ class CropWiseReportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     final entries = context.watch<EntryProvider>().entries;
 
-    // Filter Kapas data specifically
     double kapasProduction = 0;
     double kapasIncome = 0;
     double kapasExpense = 0;
@@ -22,7 +22,6 @@ class CropWiseReportScreen extends StatelessWidget {
         kapasProduction += (e.typeData['weight'] ?? 0).toDouble();
         kapasIncome += e.amount;
       }
-      // Expense linked to Kapas (Cotton)
       if (e.type == EntryTypes.expense &&
           e.typeData['crop'] == 'Kapas (Cotton)') {
         kapasExpense += e.amount;
@@ -30,6 +29,7 @@ class CropWiseReportScreen extends StatelessWidget {
     }
 
     final profit = kapasIncome - kapasExpense;
+    final pieRadius = size.width * 0.15; // Dynamic Pie Chart Radius
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
@@ -40,52 +40,53 @@ class CropWiseReportScreen extends StatelessWidget {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSizes.paddingMedium),
+        padding: EdgeInsets.all(size.width * 0.04),
         child: Column(
           children: [
-            // Stats Row
             Row(
               children: [
                 Expanded(
                     child: _buildStatCard(
+                        context,
                         'Total Production',
                         '${kapasProduction.toStringAsFixed(1)} Mann',
                         Icons.grass,
                         Colors.orange)),
-                const SizedBox(width: AppSizes.paddingMedium),
+                SizedBox(width: size.width * 0.03),
                 Expanded(
                     child: _buildStatCard(
+                        context,
                         'Total Income',
                         AppFormatters.currency(kapasIncome),
                         Icons.account_balance_wallet,
                         AppColors.toReceive)),
               ],
             ),
-            const SizedBox(height: AppSizes.paddingMedium),
+            SizedBox(height: size.height * 0.015),
             Row(
               children: [
                 Expanded(
                     child: _buildStatCard(
+                        context,
                         'Total Expense',
                         AppFormatters.currency(kapasExpense),
                         Icons.money_off,
                         AppColors.toPay)),
-                const SizedBox(width: AppSizes.paddingMedium),
+                SizedBox(width: size.width * 0.03),
                 Expanded(
                     child: _buildStatCard(
+                        context,
                         'Net Profit',
                         AppFormatters.currency(profit),
                         Icons.trending_up,
                         profit >= 0 ? AppColors.primary : AppColors.toPay)),
               ],
             ),
-            const SizedBox(height: AppSizes.paddingLarge),
-
-            // PIE CHART
+            SizedBox(height: size.height * 0.03),
             if (kapasIncome > 0 || kapasExpense > 0)
               Container(
-                height: 300,
-                padding: const EdgeInsets.all(AppSizes.paddingMedium),
+                height: size.height * 0.4, // 40% of screen height
+                padding: EdgeInsets.all(size.width * 0.04),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
@@ -100,13 +101,14 @@ class CropWiseReportScreen extends StatelessWidget {
                       child: PieChart(
                         PieChartData(
                           sectionsSpace: 2,
-                          centerSpaceRadius: 40,
+                          centerSpaceRadius:
+                              size.width * 0.12, // Dynamic center hole
                           sections: [
                             PieChartSectionData(
                               color: AppColors.toReceive,
                               value: kapasIncome,
                               title: 'Income',
-                              radius: 50,
+                              radius: pieRadius,
                               titleStyle: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -116,7 +118,7 @@ class CropWiseReportScreen extends StatelessWidget {
                               color: AppColors.toPay,
                               value: kapasExpense,
                               title: 'Cost',
-                              radius: 50,
+                              radius: pieRadius,
                               titleStyle: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -135,10 +137,11 @@ class CropWiseReportScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(
-      String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(BuildContext context, String title, String value,
+      IconData icon, Color color) {
+    final size = MediaQuery.sizeOf(context);
     return Container(
-      padding: const EdgeInsets.all(AppSizes.paddingMedium),
+      padding: EdgeInsets.all(size.width * 0.04),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
@@ -147,13 +150,13 @@ class CropWiseReportScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
+          Icon(icon, color: color, size: size.width * 0.06),
+          SizedBox(height: size.height * 0.01),
           Text(title,
               style: const TextStyle(color: AppColors.textLight, fontSize: 12)),
-          const SizedBox(height: 4),
+          SizedBox(height: size.height * 0.005),
           Text(value,
-              style: TextStyle(
+              style: const TextStyle(
                   color: AppColors.textDark,
                   fontSize: 15,
                   fontWeight: FontWeight.bold)),

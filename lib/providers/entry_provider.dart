@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import '../models/entry_model.dart';
 import '../models/rate_model.dart';
 import '../services/entry_service.dart';
@@ -17,10 +18,27 @@ class EntryProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
+  // ========== SAFE NOTIFY LISTENERS (Prevents "called during build" crash) ==========
+  void _notifySafe() {
+    if (!hasListeners) return;
+
+    final binding = WidgetsBinding.instance;
+    final phase = binding.schedulerPhase;
+
+    if (phase == SchedulerPhase.persistentCallbacks ||
+        phase == SchedulerPhase.midFrameMicrotasks) {
+      binding.addPostFrameCallback((_) {
+        if (hasListeners) notifyListeners();
+      });
+    } else {
+      notifyListeners();
+    }
+  }
+
   // Start listening to active entries
   void startListening() {
     _isLoading = true;
-    notifyListeners();
+    _notifySafe();
 
     _subscription?.cancel();
     _subscription = EntryService.getEntriesStream().listen(
@@ -28,12 +46,12 @@ class EntryProvider extends ChangeNotifier {
         _entries = list;
         _isLoading = false;
         _error = null;
-        notifyListeners();
+        _notifySafe();
       },
       onError: (e) {
         _error = e.toString();
         _isLoading = false;
-        notifyListeners();
+        _notifySafe();
       },
     );
   }
@@ -45,13 +63,13 @@ class EntryProvider extends ChangeNotifier {
       (list) {
         _trash = list;
         _error = null;
-        notifyListeners();
+        _notifySafe();
       },
       onError: (e) {
         debugPrint('TRASH STREAM ERROR: $e');
         _error = e.toString();
         _trash = [];
-        notifyListeners();
+        _notifySafe();
       },
     );
   }
@@ -72,7 +90,7 @@ class EntryProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('ADD ENTRY ERROR: $e');
       _error = e.toString();
-      notifyListeners();
+      _notifySafe();
       return false;
     }
   }
@@ -86,7 +104,7 @@ class EntryProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('UPDATE ENTRY ERROR: $e');
       _error = e.toString();
-      notifyListeners();
+      _notifySafe();
       return false;
     }
   }
@@ -99,7 +117,7 @@ class EntryProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       _error = e.toString();
-      notifyListeners();
+      _notifySafe();
       return false;
     }
   }
@@ -112,7 +130,7 @@ class EntryProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       _error = e.toString();
-      notifyListeners();
+      _notifySafe();
       return false;
     }
   }
@@ -125,7 +143,7 @@ class EntryProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       _error = e.toString();
-      notifyListeners();
+      _notifySafe();
       return false;
     }
   }

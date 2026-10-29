@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import '../models/person_model.dart';
 import '../services/people_service.dart';
 
@@ -18,10 +19,28 @@ class PeopleProvider extends ChangeNotifier {
   String get searchQuery => _searchQuery;
   int get count => _people.length;
 
+  // ========== RELEASE-SAFE NOTIFIER ==========
+  void _notifySafe() {
+    if (!hasListeners) return;
+
+    final binding = WidgetsBinding.instance;
+    final phase = binding.schedulerPhase;
+
+    // Persistent callbacks = Widget build / layout / paint phase
+    if (phase == SchedulerPhase.persistentCallbacks ||
+        phase == SchedulerPhase.midFrameMicrotasks) {
+      binding.addPostFrameCallback((_) {
+        if (hasListeners) notifyListeners();
+      });
+    } else {
+      notifyListeners();
+    }
+  }
+
   // Start listening
   void startListening() {
     _isLoading = true;
-    notifyListeners();
+    _notifySafe();
 
     _subscription?.cancel();
     _subscription = PeopleService.getPeopleStream().listen(
@@ -30,12 +49,12 @@ class PeopleProvider extends ChangeNotifier {
         _applyFilter();
         _isLoading = false;
         _error = null;
-        notifyListeners();
+        _notifySafe();
       },
       onError: (e) {
         _error = e.toString();
         _isLoading = false;
-        notifyListeners();
+        _notifySafe();
       },
     );
   }
@@ -48,7 +67,7 @@ class PeopleProvider extends ChangeNotifier {
   void search(String query) {
     _searchQuery = query;
     _applyFilter();
-    notifyListeners();
+    _notifySafe();
   }
 
   void _applyFilter() {
@@ -64,7 +83,7 @@ class PeopleProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('ADD PERSON ERROR: $e');
       _error = e.toString();
-      notifyListeners();
+      _notifySafe();
       return false;
     }
   }
@@ -77,7 +96,7 @@ class PeopleProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       _error = e.toString();
-      notifyListeners();
+      _notifySafe();
       return false;
     }
   }
@@ -90,7 +109,7 @@ class PeopleProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       _error = e.toString();
-      notifyListeners();
+      _notifySafe();
       return false;
     }
   }

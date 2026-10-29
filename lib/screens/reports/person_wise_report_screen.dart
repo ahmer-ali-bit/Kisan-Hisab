@@ -18,9 +18,9 @@ class _PersonWiseReportScreenState extends State<PersonWiseReportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     final people = context.watch<PeopleProvider>().allPeople;
 
-    // Refresh selected person data if updated
     if (_selectedPerson != null) {
       _selectedPerson = people.firstWhere((p) => p.id == _selectedPerson!.id,
           orElse: () => _selectedPerson!);
@@ -35,7 +35,7 @@ class _PersonWiseReportScreenState extends State<PersonWiseReportScreen> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSizes.paddingMedium),
+        padding: EdgeInsets.all(size.width * 0.04),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -45,31 +45,34 @@ class _PersonWiseReportScreenState extends State<PersonWiseReportScreen> {
               isRequired: false,
               onSelected: (p) => setState(() => _selectedPerson = p),
             ),
-            const SizedBox(height: AppSizes.paddingLarge),
+            SizedBox(height: size.height * 0.03),
             if (_selectedPerson == null)
-              const Center(
+              Center(
                 child: Padding(
-                  padding: EdgeInsets.all(40.0),
-                  child: Text('Select a person to view their ledger report.',
+                  padding: EdgeInsets.all(size.width * 0.1),
+                  child: const Text(
+                      'Select a person to view their ledger report.',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: AppColors.textLight)),
                 ),
               )
             else ...[
-              // Report Details for Person
               _buildDetailRow(
+                  context,
                   'Total To Receive',
                   AppFormatters.currency(_selectedPerson!.totalToReceive),
                   AppColors.toReceive),
-              const SizedBox(height: 12),
+              SizedBox(height: size.height * 0.015),
               _buildDetailRow(
+                  context,
                   'Total To Pay',
                   AppFormatters.currency(_selectedPerson!.totalToPay),
                   AppColors.toPay),
-              const SizedBox(height: 12),
+              SizedBox(height: size.height * 0.015),
               const Divider(),
-              const SizedBox(height: 12),
+              SizedBox(height: size.height * 0.015),
               _buildDetailRow(
+                  context,
                   'Net Balance',
                   AppFormatters.currency(_selectedPerson!.netBalance.abs()),
                   _selectedPerson!.netBalance == 0
@@ -78,7 +81,7 @@ class _PersonWiseReportScreenState extends State<PersonWiseReportScreen> {
                           ? AppColors.toReceive
                           : AppColors.toPay),
                   isBold: true),
-              const SizedBox(height: 4),
+              SizedBox(height: size.height * 0.005),
               Align(
                 alignment: Alignment.centerRight,
                 child: Text(
@@ -98,10 +101,12 @@ class _PersonWiseReportScreenState extends State<PersonWiseReportScreen> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value, Color color,
+  Widget _buildDetailRow(
+      BuildContext context, String label, String value, Color color,
       {bool isBold = false}) {
+    final size = MediaQuery.sizeOf(context);
     return Container(
-      padding: const EdgeInsets.all(AppSizes.paddingMedium),
+      padding: EdgeInsets.all(size.width * 0.04),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusMedium),

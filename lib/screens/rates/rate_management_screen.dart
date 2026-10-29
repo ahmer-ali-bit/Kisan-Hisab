@@ -94,7 +94,12 @@ class _RateManagementScreenState extends State<RateManagementScreen> {
                       ),
           ),
           Padding(
-            padding: const EdgeInsets.all(AppSizes.paddingMedium),
+            padding: const EdgeInsets.fromLTRB(
+              AppSizes.paddingMedium,
+              AppSizes.paddingMedium,
+              AppSizes.paddingMedium,
+              AppSizes.paddingXL,
+            ),
             child: ElevatedButton.icon(
               onPressed: _openAddRate,
               icon: const Icon(Icons.add, color: Colors.white),

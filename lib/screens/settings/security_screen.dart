@@ -111,7 +111,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                             color: AppColors.textDark)),
                     subtitle: const Text('Login using biometric authentication',
                         style: TextStyle(fontSize: 12)),
-                    activeColor: AppColors.primary,
+                    activeThumbColor: AppColors.primary,
                     value: _isFingerprintEnabled,
                     onChanged: _toggleFingerprint,
                   ),

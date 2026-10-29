@@ -8,6 +8,7 @@ import '../../providers/people_provider.dart';
 import '../../utils/formatters.dart';
 import '../entries/dynamic_entry_screen.dart';
 import '../entries/select_entry_type_screen.dart';
+import '../history/history_screen.dart';
 import 'add_person_screen.dart';
 
 class PersonAccountScreen extends StatelessWidget {
@@ -17,7 +18,7 @@ class PersonAccountScreen extends StatelessWidget {
 
   // Calculate breakdown from entries
   Map<String, double> _calculateBreakdown(List<EntryModel> entries) {
-    double kapas = 0, paani = 0, mazdoori = 0, expenses = 0, payments = 0;
+    double kapas = 0, paani = 0, mazdoori = 0, expenses = 0;
 
     for (var e in entries) {
       if (e.type == EntryTypes.kapas) kapas += e.amount;
@@ -45,6 +46,15 @@ class PersonAccountScreen extends StatelessWidget {
 
   void _navigate(BuildContext context, Widget screen) {
     Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+  }
+
+  void _navigateWithPerson(BuildContext context, String entryType) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SelectEntryTypeScreen(personId: personId),
+      ),
+    );
   }
 
   @override
@@ -79,53 +89,61 @@ class PersonAccountScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSizes.paddingMedium),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ========== 1. TOTAL BALANCE CARD ==========
-            _buildTotalHisabCard(person),
-            const SizedBox(height: AppSizes.paddingLarge),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          context.read<PeopleProvider>().startListening();
+          context.read<EntryProvider>().startListening();
+        },
+        color: AppColors.primary,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(AppSizes.paddingMedium),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ========== 1. TOTAL BALANCE CARD ==========
+              _buildTotalHisabCard(person),
+              const SizedBox(height: AppSizes.paddingLarge),
 
-            // ========== 2. ACTION BUTTONS ==========
-            _buildActionButtons(context),
-            const SizedBox(height: AppSizes.paddingLarge),
+              // ========== 2. ACTION BUTTONS ==========
+              _buildActionButtons(context),
+              const SizedBox(height: AppSizes.paddingLarge),
 
-            // ========== 3. CATEGORIES BREAKDOWN ==========
-            const Text(
-              'Categories',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textDark,
+              // ========== 3. CATEGORIES BREAKDOWN ==========
+              const Text(
+                'Categories',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textDark,
+                ),
               ),
-            ),
-            const SizedBox(height: AppSizes.paddingMedium),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
-                border: Border.all(color: AppColors.border),
+              const SizedBox(height: AppSizes.paddingMedium),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Column(
+                  children: [
+                    _buildCategoryRow('Kapas (Cotton)', Icons.grass,
+                        AppColors.kapasColor, breakdown['Kapas (Cotton)']!),
+                    const Divider(height: 1),
+                    _buildCategoryRow('Paani (Tubewell)', Icons.water_drop,
+                        AppColors.paaniColor, breakdown['Paani (Tubewell)']!),
+                    const Divider(height: 1),
+                    _buildCategoryRow('Mazdoori', Icons.engineering,
+                        AppColors.mazdoorColor, breakdown['Mazdoori']!),
+                    const Divider(height: 1),
+                    _buildCategoryRow('Other / Expenses', Icons.receipt_long,
+                        AppColors.expenseColor, breakdown['Expenses']!),
+                  ],
+                ),
               ),
-              child: Column(
-                children: [
-                  _buildCategoryRow('Kapas (Cotton)', Icons.grass,
-                      AppColors.kapasColor, breakdown['Kapas (Cotton)']!),
-                  const Divider(height: 1),
-                  _buildCategoryRow('Paani (Tubewell)', Icons.water_drop,
-                      AppColors.paaniColor, breakdown['Paani (Tubewell)']!),
-                  const Divider(height: 1),
-                  _buildCategoryRow('Mazdoori', Icons.engineering,
-                      AppColors.mazdoorColor, breakdown['Mazdoori']!),
-                  const Divider(height: 1),
-                  _buildCategoryRow('Other / Expenses', Icons.receipt_long,
-                      AppColors.expenseColor, breakdown['Expenses']!),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppSizes.paddingXL),
-          ],
+              const SizedBox(height: AppSizes.paddingXL),
+            ],
+          ),
         ),
       ),
     );
@@ -251,28 +269,37 @@ class PersonAccountScreen extends StatelessWidget {
           label: 'Add Entry',
           icon: Icons.add,
           color: AppColors.primary,
-          onTap: () => _navigate(context, const SelectEntryTypeScreen()),
+          onTap: () => _navigateWithPerson(context, ''),
         ),
         _ActionButton(
           label: 'Receive',
           icon: Icons.arrow_downward,
           color: AppColors.toReceive,
-          onTap: () => _navigate(context,
-              const DynamicEntryScreen(entryType: EntryTypes.paymentReceive)),
+          onTap: () => _navigate(
+              context,
+              DynamicEntryScreen(
+                  entryType: EntryTypes.paymentReceive, personId: personId)),
         ),
         _ActionButton(
           label: 'Pay',
           icon: Icons.arrow_upward,
           color: AppColors.toPay,
-          onTap: () => _navigate(context,
-              const DynamicEntryScreen(entryType: EntryTypes.paymentPay)),
+          onTap: () => _navigate(
+              context,
+              DynamicEntryScreen(
+                  entryType: EntryTypes.paymentPay, personId: personId)),
         ),
         _ActionButton(
           label: 'History',
           icon: Icons.history,
           color: AppColors.textDark,
           onTap: () {
-          
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => HistoryScreen(personId: personId),
+              ),
+            );
           },
         ),
       ],
@@ -338,7 +365,7 @@ class _ActionButton extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: AppColors.textDark,

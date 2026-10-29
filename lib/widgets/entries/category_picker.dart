@@ -44,8 +44,10 @@ class CategoryPicker extends StatelessWidget {
               const SizedBox(height: AppSizes.paddingMedium),
               ...options.map((option) {
                 final isSelected = selectedValue == option;
-                return ListTile(
-                  title: Text(
+                return Material(
+                  color: Colors.transparent,
+                  child: ListTile(
+                    title: Text(
                     option,
                     style: TextStyle(
                       fontWeight:
@@ -61,7 +63,8 @@ class CategoryPicker extends StatelessWidget {
                     onSelected(option);
                     Navigator.pop(ctx);
                   },
-                );
+                ),
+              );
               }),
             ],
           ),

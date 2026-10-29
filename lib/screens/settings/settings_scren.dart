@@ -153,7 +153,7 @@ class SettingsScreen extends StatelessWidget {
           horizontal: AppSizes.paddingMedium, vertical: 4),
       leading: Container(
         padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             color: AppColors.scaffoldBackground, shape: BoxShape.circle),
         child: Icon(icon, color: AppColors.textDark, size: 22),
       ),

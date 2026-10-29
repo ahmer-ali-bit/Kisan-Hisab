@@ -11,10 +11,14 @@ class MainShellScreen extends StatefulWidget {
   const MainShellScreen({super.key, this.initialTab = 0});
 
   @override
-  State<MainShellScreen> createState() => _MainShellScreenState();
+  State<MainShellScreen> createState() => MainShellScreenState();
+
+  static MainShellScreenState? of(BuildContext context) {
+    return context.findAncestorStateOfType<MainShellScreenState>();
+  }
 }
 
-class _MainShellScreenState extends State<MainShellScreen> {
+class MainShellScreenState extends State<MainShellScreen> {
   late int _currentIndex;
 
   @override
@@ -32,6 +36,21 @@ class _MainShellScreenState extends State<MainShellScreen> {
 
     setState(() {
       _currentIndex = index;
+    });
+  }
+
+  /// Programmatically switch to a tab (used by child screens like Dashboard)
+  void switchToTab(int index) {
+    if (index == 2) {
+      Navigator.pushNamed(context, '/select-entry-type');
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _currentIndex = index;
+        });
+      }
     });
   }
 

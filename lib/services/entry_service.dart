@@ -279,6 +279,56 @@ class EntryService {
     });
   }
 
+  // ========== GET ENTRIES BY PERSON WITH DATE RANGE ==========
+  static Stream<List<EntryModel>> getPersonEntriesStreamWithDateRange({
+    required String personId,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async* {
+    final uid = await _getUid();
+    final endOfDay = DateTime(endDate.year, endDate.month, endDate.day, 23, 59, 59, 999);
+    yield* _db
+        .collection('users')
+        .doc(uid)
+        .collection('entries')
+        .where('personId', isEqualTo: personId)
+        .where('isDeleted', isEqualTo: false)
+        .where('date',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+        .where('date', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
+        .snapshots()
+        .map((snap) {
+      final list =
+          snap.docs.map((d) => EntryModel.fromMap(d.id, d.data())).toList();
+      list.sort((a, b) => b.date.compareTo(a.date));
+      return list;
+    });
+  }
+
+  // ========== GET ALL ENTRIES WITH DATE RANGE ==========
+  static Stream<List<EntryModel>> getEntriesStreamWithDateRange({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async* {
+    final uid = await _getUid();
+    final endOfDay = DateTime(endDate.year, endDate.month, endDate.day, 23, 59, 59, 999);
+    yield* _db
+        .collection('users')
+        .doc(uid)
+        .collection('entries')
+        .where('isDeleted', isEqualTo: false)
+        .where('date',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+        .where('date', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
+        .snapshots()
+        .map((snap) {
+      final list =
+          snap.docs.map((d) => EntryModel.fromMap(d.id, d.data())).toList();
+      list.sort((a, b) => b.date.compareTo(a.date));
+      return list;
+    });
+  }
+
   // ========== GET LATEST RATE (for auto-fill) ==========
   static Future<RateModel?> getLatestRate(String type, DateTime forDate) async {
     final uid = await _getUid();

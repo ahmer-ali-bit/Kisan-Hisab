@@ -11,27 +11,19 @@ class MonthlyReportScreen extends StatelessWidget {
 
   Map<int, Map<String, double>> _calculateMonthlyData(
       List<EntryModel> entries) {
-    // Key: Month (1-12), Value: {'income': x, 'expense': y}
     final Map<int, Map<String, double>> data = {};
-
-    // Initialize current year's months
     for (int i = 1; i <= 12; i++) {
       data[i] = {'income': 0, 'expense': 0};
     }
-
     final currentYear = DateTime.now().year;
 
     for (var entry in entries) {
-      if (entry.date.year != currentYear) continue; // Only this year
-
+      if (entry.date.year != currentYear) continue;
       final month = entry.date.month;
 
-      // Income: Kapas, Paani
       if (entry.type == EntryTypes.kapas || entry.type == EntryTypes.paani) {
         data[month]!['income'] = data[month]!['income']! + entry.amount;
-      }
-      // Expense: Mazdoori, Expense
-      else if (entry.type == EntryTypes.mazdoori ||
+      } else if (entry.type == EntryTypes.mazdoori ||
           entry.type == EntryTypes.expense) {
         data[month]!['expense'] = data[month]!['expense']! + entry.amount;
       }
@@ -41,6 +33,7 @@ class MonthlyReportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     final entries = context.watch<EntryProvider>().entries;
     final monthlyData = _calculateMonthlyData(entries);
 
@@ -62,31 +55,31 @@ class MonthlyReportScreen extends StatelessWidget {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSizes.paddingMedium),
+        padding: EdgeInsets.all(size.width * 0.04),
         child: Column(
           children: [
-            // SUMMARY CARDS
             Row(
               children: [
                 Expanded(
-                    child: _buildSummaryCard(
-                        'Total Income', totalIncome, AppColors.toReceive)),
-                const SizedBox(width: AppSizes.paddingSmall),
+                    child: _buildSummaryCard(context, 'Total Income',
+                        totalIncome, AppColors.toReceive)),
+                SizedBox(width: size.width * 0.03),
                 Expanded(
-                    child: _buildSummaryCard(
-                        'Total Expense', totalExpense, AppColors.toPay)),
+                    child: _buildSummaryCard(context, 'Total Expense',
+                        totalExpense, AppColors.toPay)),
               ],
             ),
-            const SizedBox(height: AppSizes.paddingSmall),
-            _buildSummaryCard('Net Profit / Loss', netProfit.abs(),
+            SizedBox(height: size.height * 0.015),
+            _buildSummaryCard(context, 'Net Profit / Loss', netProfit.abs(),
                 netProfit >= 0 ? AppColors.primary : AppColors.toPay,
                 prefix: netProfit >= 0 ? '+' : '-', isFullWidth: true),
-            const SizedBox(height: AppSizes.paddingLarge),
+            SizedBox(height: size.height * 0.03),
 
-            // CHART
+            // CHART CONTAINER
             Container(
-              height: 350,
-              padding: const EdgeInsets.all(AppSizes.paddingMedium),
+              height: size.height *
+                  0.45, // 45% of screen height instead of fixed 350px
+              padding: EdgeInsets.all(size.width * 0.04),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
@@ -98,13 +91,13 @@ class MonthlyReportScreen extends StatelessWidget {
                   const Text('Income vs Expense',
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  const SizedBox(height: 20),
+                  SizedBox(height: size.height * 0.02),
                   Expanded(
                     child: BarChart(
                       BarChartData(
                         alignment: BarChartAlignment.spaceAround,
                         maxY: _getMaxY(monthlyData),
-                        barTouchData: BarTouchData(enabled: true),
+                        barTouchData: const BarTouchData(enabled: true),
                         titlesData: FlTitlesData(
                           show: true,
                           bottomTitles: AxisTitles(
@@ -126,7 +119,8 @@ class MonthlyReportScreen extends StatelessWidget {
                                   'D'
                                 ];
                                 return Padding(
-                                  padding: const EdgeInsets.only(top: 8),
+                                  padding:
+                                      EdgeInsets.only(top: size.height * 0.01),
                                   child: Text(months[value.toInt() - 1],
                                       style: const TextStyle(fontSize: 10)),
                                 );
@@ -142,16 +136,17 @@ class MonthlyReportScreen extends StatelessWidget {
                         ),
                         gridData: const FlGridData(show: false),
                         borderData: FlBorderData(show: false),
-                        barGroups: _buildBarGroups(monthlyData),
+                        barGroups: _buildBarGroups(monthlyData,
+                            size.width), // Pass width for bar width
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: size.height * 0.02),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _buildLegendItem('Income', AppColors.toReceive),
-                      const SizedBox(width: 16),
+                      SizedBox(width: size.width * 0.05),
                       _buildLegendItem('Expense', AppColors.toPay),
                     ],
                   ),
@@ -170,11 +165,15 @@ class MonthlyReportScreen extends StatelessWidget {
       if (value['income']! > max) max = value['income']!;
       if (value['expense']! > max) max = value['expense']!;
     });
-    return max == 0 ? 10000 : max * 1.2; // 20% padding top
+    return max == 0 ? 10000 : max * 1.2;
   }
 
-  List<BarChartGroupData> _buildBarGroups(Map<int, Map<String, double>> data) {
+  List<BarChartGroupData> _buildBarGroups(
+      Map<int, Map<String, double>> data, double screenWidth) {
     List<BarChartGroupData> groups = [];
+    final barWidth =
+        screenWidth * 0.02; // Dynamic bar width based on screen size
+
     data.forEach((month, values) {
       groups.add(
         BarChartGroupData(
@@ -183,12 +182,12 @@ class MonthlyReportScreen extends StatelessWidget {
             BarChartRodData(
                 toY: values['income']!,
                 color: AppColors.toReceive,
-                width: 8,
+                width: barWidth,
                 borderRadius: BorderRadius.circular(2)),
             BarChartRodData(
                 toY: values['expense']!,
                 color: AppColors.toPay,
-                width: 8,
+                width: barWidth,
                 borderRadius: BorderRadius.circular(2)),
           ],
         ),
@@ -197,11 +196,13 @@ class MonthlyReportScreen extends StatelessWidget {
     return groups;
   }
 
-  Widget _buildSummaryCard(String title, double amount, Color color,
+  Widget _buildSummaryCard(
+      BuildContext context, String title, double amount, Color color,
       {bool isFullWidth = false, String prefix = ''}) {
+    final size = MediaQuery.sizeOf(context);
     return Container(
       width: isFullWidth ? double.infinity : null,
-      padding: const EdgeInsets.all(AppSizes.paddingMedium),
+      padding: EdgeInsets.all(size.width * 0.04),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
@@ -213,7 +214,7 @@ class MonthlyReportScreen extends StatelessWidget {
           Text(title,
               style: TextStyle(
                   color: color, fontSize: 13, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 8),
+          SizedBox(height: size.height * 0.01),
           Text(
             '$prefix${AppFormatters.currency(amount)}',
             style: TextStyle(

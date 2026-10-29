@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../config/constants.dart';
 import '../../providers/people_provider.dart';
 import '../../utils/responsive.dart';
-import '../../widgets/common/empty_state.dart';
+import '../../widgets/common/error_states.dart';
 import '../../widgets/people/person_tile.dart';
 
 class PeopleListScreen extends StatefulWidget {
@@ -65,92 +65,109 @@ class _PeopleListScreenState extends State<PeopleListScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Search Bar
-          Container(
-            color: AppColors.primary,
-            padding: const EdgeInsets.fromLTRB(
-              AppSizes.paddingMedium,
-              0,
-              AppSizes.paddingMedium,
-              AppSizes.paddingMedium,
-            ),
-            child: TextField(
-              controller: _searchController,
-              onChanged: provider.search,
-              style: const TextStyle(color: AppColors.textDark),
-              decoration: InputDecoration(
-                hintText: 'Search by name or phone',
-                hintStyle:
-                    const TextStyle(color: AppColors.textLight, fontSize: 14),
-                prefixIcon:
-                    const Icon(Icons.search, color: AppColors.textLight),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon:
-                            const Icon(Icons.clear, color: AppColors.textLight),
-                        onPressed: () {
-                          _searchController.clear();
-                          provider.search('');
-                        },
-                      )
-                    : null,
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
-                  borderSide: BorderSide.none,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          provider.startListening();
+        },
+        color: AppColors.primary,
+        child: Column(
+          children: [
+            // Search Bar
+            Container(
+              color: AppColors.primary,
+              padding: const EdgeInsets.fromLTRB(
+                AppSizes.paddingMedium,
+                0,
+                AppSizes.paddingMedium,
+                AppSizes.paddingMedium,
+              ),
+              child: TextField(
+                controller: _searchController,
+                onChanged: provider.search,
+                style: const TextStyle(color: AppColors.textDark),
+                decoration: InputDecoration(
+                  hintText: 'Search by name or phone',
+                  hintStyle:
+                      const TextStyle(color: AppColors.textLight, fontSize: 14),
+                  prefixIcon:
+                      const Icon(Icons.search, color: AppColors.textLight),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon:
+                              const Icon(Icons.clear, color: AppColors.textLight),
+                          onPressed: () {
+                            _searchController.clear();
+                            provider.search('');
+                          },
+                        )
+                      : null,
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
             ),
-          ),
 
-          // List
-          Expanded(
-            child: provider.isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(color: AppColors.primary))
-                : provider.people.isEmpty
-                    ? EmptyState(
-                        icon: Icons.people_outline,
-                        title: provider.searchQuery.isEmpty
-                            ? 'No people yet'
-                            : 'No results found',
-                        subtitle: provider.searchQuery.isEmpty
-                            ? 'Tap + to add your first person'
-                            : 'Try a different name or phone',
-                      )
-                    : ListView.separated(
-                        padding: EdgeInsets.fromLTRB(
-                          context.w(AppSizes.paddingMedium),
-                          context.h(AppSizes.paddingMedium),
-                          context.w(AppSizes.paddingMedium),
-                          context.h(80),
-                        ),
-                        itemCount: provider.people.length,
-                        separatorBuilder: (_, __) => SizedBox(height: context.h(10)),
-                        itemBuilder: (context, index) {
-                          final person = provider.people[index];
-                          return PersonTile(
-                            person: person,
-                            onTap: () {
-                              // Module 7 Integration - Open Ledger Account
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      PersonAccountScreen(personId: person.id),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-          ),
-        ],
+            // List
+            Expanded(
+              child: provider.isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(color: AppColors.primary))
+                  : provider.error != null
+                      ? ErrorState(
+                          message: provider.error!,
+                          onRetry: () => provider.startListening(),
+                        )
+                      : provider.people.isEmpty
+                          ? EmptyStateWithAction(
+                              icon: Icons.people_outline,
+                              title: provider.searchQuery.isEmpty
+                                  ? 'No people yet'
+                                  : 'No results found',
+                              subtitle: provider.searchQuery.isEmpty
+                                  ? 'Tap + to add your first person'
+                                  : 'Try a different name or phone',
+                              actionLabel: provider.searchQuery.isEmpty
+                                  ? 'Add Person'
+                                  : null,
+                              onAction: provider.searchQuery.isEmpty
+                                  ? () => _openAddPerson()
+                                  : null,
+                            )
+                          : ListView.separated(
+                              padding: EdgeInsets.fromLTRB(
+                                context.w(AppSizes.paddingMedium),
+                                context.h(AppSizes.paddingMedium),
+                                context.w(AppSizes.paddingMedium),
+                                context.h(80),
+                              ),
+                              itemCount: provider.people.length,
+                              separatorBuilder: (_, __) =>
+                                  SizedBox(height: context.h(10)),
+                              itemBuilder: (context, index) {
+                                final person = provider.people[index];
+                                return PersonTile(
+                                  person: person,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            PersonAccountScreen(personId: person.id),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openAddPerson(),

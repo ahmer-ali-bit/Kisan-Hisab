@@ -64,7 +64,9 @@ class PersonPicker extends StatelessWidget {
                       itemBuilder: (context, i) {
                         final person = people[i];
                         final isSelected = selectedPerson?.id == person.id;
-                        return ListTile(
+                        return Material(
+                          color: Colors.transparent,
+                          child: ListTile(
                           leading: PersonAvatar(
                             name: person.name,
                             photoBase64: person.photoBase64,
@@ -84,7 +86,8 @@ class PersonPicker extends StatelessWidget {
                             onSelected(person);
                             Navigator.pop(ctx);
                           },
-                        );
+                        ),
+                      );
                       },
                     ),
             ),

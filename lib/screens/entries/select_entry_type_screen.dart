@@ -4,13 +4,15 @@ import '../../utils/responsive.dart';
 import 'dynamic_entry_screen.dart';
 
 class SelectEntryTypeScreen extends StatelessWidget {
-  const SelectEntryTypeScreen({super.key});
+  final String? personId;
+
+  const SelectEntryTypeScreen({super.key, this.personId});
 
   void _navigate(BuildContext context, String type) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => DynamicEntryScreen(entryType: type),
+        builder: (_) => DynamicEntryScreen(entryType: type, personId: personId),
       ),
     );
   }

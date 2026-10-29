@@ -5,6 +5,7 @@ import '../../providers/dashboard_provider.dart';
 import '../../utils/formatters.dart';
 import '../../utils/helpers.dart';
 import '../../utils/responsive.dart';
+import '../main_shell_screen.dart';
 import '../pending/pending_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -143,8 +144,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               color: AppColors.textDark),
                         ),
                         TextButton(
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/history'),
+                          onPressed: () {
+                            MainShellScreen.of(context)?.switchToTab(3);
+                          },
                           child: const Text('See All',
                               style: TextStyle(color: AppColors.primary)),
                         ),

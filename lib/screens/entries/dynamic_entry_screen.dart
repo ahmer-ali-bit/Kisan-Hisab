@@ -4,6 +4,7 @@ import '../../config/constants.dart';
 import '../../models/entry_model.dart';
 import '../../models/person_model.dart';
 import '../../providers/entry_provider.dart';
+import '../../providers/people_provider.dart';
 import '../../utils/calculations.dart';
 import '../../utils/formatters.dart';
 import '../../utils/helpers.dart';
@@ -16,8 +17,9 @@ import '../../widgets/entries/person_picker.dart';
 
 class DynamicEntryScreen extends StatefulWidget {
   final String entryType;
+  final String? personId;
 
-  const DynamicEntryScreen({super.key, required this.entryType});
+  const DynamicEntryScreen({super.key, required this.entryType, this.personId});
 
   @override
   State<DynamicEntryScreen> createState() => _DynamicEntryScreenState();
@@ -43,6 +45,7 @@ class _DynamicEntryScreenState extends State<DynamicEntryScreen> {
   double _calculatedAmount = 0; // For Kapas, Paani, Mazdoori
   bool _isSaving = false;
   DateTime? _rateEffectiveFrom;
+  bool _personAutoSelected = false;
 
   // ========== GETTERS FOR DYNAMIC UI ==========
 
@@ -54,6 +57,8 @@ class _DynamicEntryScreenState extends State<DynamicEntryScreen> {
       widget.entryType == EntryTypes.kapas ||
       widget.entryType == EntryTypes.paani ||
       widget.entryType == EntryTypes.mazdoori;
+
+  bool get _isPersonPreSelected => widget.personId != null && !_personAutoSelected;
 
   String get _title {
     switch (widget.entryType) {
@@ -117,6 +122,20 @@ class _DynamicEntryScreenState extends State<DynamicEntryScreen> {
       _qtyCtrl.addListener(_calculateDynamicAmount);
       _rateCtrl.addListener(_calculateDynamicAmount);
       WidgetsBinding.instance.addPostFrameCallback((_) => _fetchLatestRate());
+    }
+    // Auto-select person if personId is provided
+    if (widget.personId != null) {
+      _autoSelectPerson();
+    }
+  }
+
+  Future<void> _autoSelectPerson() async {
+    final person = context.read<PeopleProvider>().getById(widget.personId!);
+    if (person != null && mounted) {
+      setState(() {
+        _selectedPerson = person;
+        _personAutoSelected = true;
+      });
     }
   }
 
@@ -278,8 +297,8 @@ class _DynamicEntryScreenState extends State<DynamicEntryScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Person Picker (Hidden for Expense)
-              if (!_isExpense) ...[
+              // 1. Person Picker (Hidden for Expense and when person is pre-selected)
+              if (!_isExpense && !_isPersonPreSelected) ...[
                 PersonPicker(
                   label: _isPaymentReceive
                       ? 'From (Person)'
